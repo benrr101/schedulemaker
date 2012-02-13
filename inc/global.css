@@ -494,6 +494,14 @@ li {
 	width:193px;
 	color:grey;
 }
+
+button.addCourse {
+	width:20px;
+	height:27px;
+	vertical-align:bottom;
+	margin-top:0px;
+}
+
 #nonCourses,
 #noCourses td {
 	text-align:center;

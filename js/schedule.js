@@ -221,7 +221,24 @@ function courseOnFocus(field) {
 	// Clear the value and change the text-color back to black
 	if($(field).val() == "XXXX-XXX-XX") {
 		$(field).val("");
+	} else {
+		// If there is already a button, don't add another one
+		if(!$(field).next().is("button")) {
+			// Make the input field shorter
+			$(field).css("width", "170px");			
+
+			// Insert a button that will allow users to add the course
+			var button = $("<button>");
+			button.addClass("addCourse");
+			button.html("+");
+			button.click(function(e) {
+				e.preventDefault();
+				getCourseOptions(field, true); 
+			});
+			button.insertAfter(field);
+		}
 	}
+	
 	$(field).css("color", "black");
 }
 
@@ -547,13 +564,20 @@ function expandForm() {
 	});
 }
 
-function getCourseOptions(field) {
+function getCourseOptions(field, add) {
 	// If it's blank, then set the value back to the default and do nothing
 	if($(field).val() == "") {
 		$(field).val("XXXX-XXX-XX");
 		$(field).css("color", "grey");
-		$(field.parentNode.children[2]).slideUp();
-		$(field.parentNode.children[2]).html("");
+		if($(field).next().is("button")) {
+			// Remove the button, re-expand the input field
+			$(field).next().remove();
+			$(field).css("width", "");
+		}
+
+		// Remove the table
+		$(field).next().slideUp();
+		$(field).next().html("");
 		return;
 	}
 
@@ -568,7 +592,11 @@ function getCourseOptions(field) {
 		function(data) {		
 		try {		
 		// Grab the course options (results) div
-		courseOpts = field.parentNode.children[2];
+		if($(field).next().is("button")) {
+			var courseOpts = $(field).next().next();
+		} else {
+			var courseOpts = $(field).next();
+		}
 
 		// Process the resulting code
 		jsonResult = eval(data);
@@ -586,19 +614,55 @@ function getCourseOptions(field) {
 			$(courseOpts).slideDown();
 			return;
 		} else {
-			// Empty out any currently showing courses
-			$(courseOpts).empty();
-			$(courseOpts).removeClass();
-			$(courseOpts).addClass("courseOpts");
-			
-			// Create a header that will show the number of courses matched
-			// and provide a link to expand them
-			var listInfo = $("<span>").html(jsonResult.length + " Course Matches ");
-			var expandLink = $("<a>").html("[ Show Matches ]");
-			expandLink.attr("href", "#");
-
 			// Create a list of courses (hidden at first)
-			var listTable = $("<table>").addClass("courseOptsTable");
+			if(add) {
+				// We're adding more courses to the list 
+				var listTable = $(field).next().next().children("table");
+
+				// Change the header to reflect the additional courses
+				var listInfo = $(field).next().next().children("span");
+				var oldCourses = parseInt(listInfo.html().match(/\d+/));
+				listInfo.html(listInfo.html().replace(/\d+/, oldCourses + jsonResult.length));
+				var expandLink = listInfo.children("a");	// Grab so we can assign to it
+			} else {
+				// We're creating the list of courses
+				var listTable = $("<table>").addClass("courseOptsTable");
+				
+				// Clear out the current set of courses
+				$(courseOpts).empty();
+				$(courseOpts).removeClass();
+				$(courseOpts).addClass("courseOpts");
+
+				// Create a header to show the number of courses matching and
+				// create a link to expand them
+				var listInfo = $("<span>").html(jsonResult.length + " Course Matches ");
+				var expandLink = $("<a>").html("[ Show Matches ]");
+				expandLink.attr("href", "#");
+
+				
+				// Insert the information header
+				listInfo.append(expandLink);
+				$(courseOpts).append(listInfo);
+			}
+
+			// Assign a handler to the expand link that actually expands
+			expandLink.click(function(event) {
+				// Don't follow the link
+				event.preventDefault();
+
+				// Show the table (or hide it)
+				$(this).parent().next().toggle();
+
+				// Change the text
+				if($(this).html() == "[ Show Matches ]") {
+					$(this).html("[ Hide Matches ]");
+				} else {
+					$(this).html("[ Show Matches ]");
+				}
+			});
+	
+			// Iterate over the returned list of courses and add rows for
+			// them in the courseOpts table
 			for(var i = 0; i < jsonResult.length; i++) {
 				// Add the row
 				var row = $("<tr>");
@@ -614,27 +678,8 @@ function getCourseOptions(field) {
 			}
 
 			// Append everything as it should be
-			listInfo.append(expandLink);
-			$(courseOpts).append(listInfo);
 			$(courseOpts).append(listTable);
 			$(courseOpts).slideDown();
-
-			// Add click handler to the expand link that will show the list
-			// of matching courses
-			expandLink.click(function(event) {
-				// Don't follow the link
-				event.preventDefault();
-
-				// Show the table (or hide it)
-				$(this).parent().next().toggle();
-
-				// Change the text
-				if($(this).html() == "[ Show Matches ]") {
-					$(this).html("[ Hide Matches ]");
-				} else {
-					$(this).html("[ Show Matches ]");
-				}
-			});
 		}
 	});
 }
