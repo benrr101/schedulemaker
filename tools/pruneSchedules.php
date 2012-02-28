@@ -14,7 +14,7 @@ require "../inc/databaseConn.php";
 global $dbConn;
 
 // Build a where clause that will be resued
-$where = "WHERE (NOW() - datelastaccessed > (60 * 60 * 24 * 90))";
+$where = "WHERE (UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(datelastaccessed) > (60 * 60 * 24 * 90))";
 
 // Run the query to delete the courses of the schedule that are older than
 // 90 days
