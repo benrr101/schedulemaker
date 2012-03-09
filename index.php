@@ -5,8 +5,10 @@
 // @author	Ben Russell (benrr101@csh.rit.edu)
 //
 // @file	index.php
-// @descrip	Index page for schedule maker. Displays a static home page with
-//			links to everything.
+// @descrip	Index page for schedule maker. It does the initial processing on
+//			the URI, loads up the controller that was requested, and calls the
+//			method from the controller that was specified. If the controller
+//			doesn't exist, or the method doesn't exist. An error is raised.
 ////////////////////////////////////////////////////////////////////////////
 
 // If the link is to ?s=yadayada Redirect to the schedule page
@@ -14,22 +16,53 @@ if(isset($_GET['s'])) {
 	require_once("./inc/config.php");
 	header("Location: {$HTTPROOTADDRESS}schedule.php?mode=old&id={$_GET['s']}");
 	die();
-} 
+}
 
-require "./inc/header.inc";
-?>
-<div id="mainMenu">
-	<div class='navItem'>
-		<a href='generate.php'><img src='img/calendar.png' alt='Make a Schedule'></a>
-		<div><a href='generate.php'>Make a Schedule</a></div>
-	</div>
-	<div class='navItem'>
-		<a href='browse.php'><img src='img/browse.png' alt='Browse Courses'></a>
-		<div><a href='browse.php'>Browse Courses</a></div>
-	</div>
-	<div class='navItem'>
-		<a href='roulette.php'><img src='img/roulette.png' alt='Course Roulette'></a>
-		<div><a href='roulette.php'>Course Roulette</a></div>
-	</div>
-</div>
-<? require "./inc/footer.inc"; ?>
+// AUTOLOADING /////////////////////////////////////////////////////////////
+function __autoload($class_name) {
+	// What type of class is it?
+	if(strstr($class_name, "View") == "View") {
+		// Require a view
+		require_once("views/{$class_name}.php");
+	} elseif(strstr($class_name, "Controller") == "Controller") {
+		// Require a controller
+		require_once("controllers/{$class_name}.php");
+	} else {
+		var_dump(strstr("Controller", $class_name));
+		var_dump(strrpos($class_name, "Controller"));
+		var_dump($class_name);
+	}
+
+	// @TODO: Check to see if the class exists
+}
+
+// URI PROCESSING //////////////////////////////////////////////////////////
+// Grab the URL
+$url      = (isset($_GET['url'])) ? $_GET['url'] : NULL;
+$urlSplit = (isset($_GET['url'])) ? explode("/", $url) : NULL;
+if(!$url) {
+	// We weren't provided with a controller to load, so load the index page
+	$controller = "Index";
+} else {
+	// We were provided with a controller along with other stuff
+	$controller = ucfirst($urlSplit[0]);
+}
+
+// Load up the requested controller
+$controller .= "Controller";
+$controller = new $controller($url);
+
+// Was there a method provided?
+if(!empty($urlSplit['1'])) {
+	// There was method provided! Does it exist?
+	$method = $urlSplit['1'];
+	if(method_exists($controller, $method)) {
+		// Method exists, call it!
+		$controller->$method();
+	} else {
+		// @TODO: Error conditions
+	}
+} else {
+	// We're loading the default method (which is guaranteed to exist)
+	$controller->index();
+}
