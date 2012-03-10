@@ -20,7 +20,7 @@
 				<tr>
 					<td><?= date('m/d/y h:ia', $log['timeStarted']) ?></td>
 					<td><?= date('m/d/y h:ia', $log['timeEnded']) ?></td>
-					<td><?= date("G:i:s", ($log['timeEnded'] - $log['timeStarted'])) ?></td>
+					<td><?= $this->timeElapsed($log['timeEnded'] - $log['timeStarted']) ?></td>
 					<td><?= $log['coursesAdded'] ?></td>
 					<td><?= $log['sectionsAdded'] ?></td>
 					<td><?= $log['sectionsUpdated'] ?></td>
