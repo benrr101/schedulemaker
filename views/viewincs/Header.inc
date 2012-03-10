@@ -2,8 +2,8 @@
 <html>
 	<head>
 		<title><?= $this->title ?></title>
-		<link href='./inc/global.css' rel='stylesheet' type='text/css'>
-		<script type='text/javascript' stc='./js/jquery.js'></script>
+		<link href='<?= $this->baseURL ?>inc/global.css' rel='stylesheet' type='text/css'>
+		<script type='text/javascript' stc='<?= $this->baseURL ?>js/jquery.js'></script>
 	</head>
 <body>
 	<div id='oldBadge'>
@@ -12,15 +12,15 @@
 	</div>
 	<div id='superContainer'>
 	<div id='header'>
-		<div class='logo'><a href='index.php'>ScheduleMaker</a></div>
+		<div class='logo'><a href='<?= $this->pageURL() ?>'>ScheduleMaker</a></div>
 		<div class='nav<?= ($this->underline == "roulette") ? " underline" : "" ?>'>
-			<a href='roulette.php'>Course Roulette</a>
+			<a href='<?= $this->pageURL("roulette") ?>'>Course Roulette</a>
 		</div>
 		<div class='nav<?= ($this->underline == "browse") ? " underline" : "" ?>'>
-			<a href='browse.php'>Browse Courses</a>
+			<a href='<?= $this->pageURL("browse") ?>'>Browse Courses</a>
 		</div>
 		<div class='nav<?= ($this->underline == "generate") ? " underline" : "" ?>'>
-			<a href='generate.php'>Build Schedules</a>
+			<a href='<?= $this->pageURL("generate") ?>'>Build Schedules</a>
 		</div>
 	</div>
 	<div id="container">

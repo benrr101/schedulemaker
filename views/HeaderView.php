@@ -23,6 +23,7 @@ class HeaderView extends View {
 	 * @param	string	$title	The title of the page
 	 */
 	public function __construct($title, $under = NULL) {
+		parent::__construct();
 		$this->title = $title;
 		$this->underline = $under;
 	}
