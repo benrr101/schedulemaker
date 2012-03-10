@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+---- SCHEDULEMAKER - Configuration
+----
+---- @file	inc/config.xml
+---- @descrip	This file defines the attributes necessary for running the
+----		schedulemaker web application.
+---- @author	Benjamin Russell (benrr101@csh.rit.edu)
+-->
+<schedulemaker>
+	<attributes>
+		<!-- A safe location for the cookie store needed for scraping -->
+		<attribute name='cookie_store'      value='/tmp/siscookies.txt' />
+
+		<!-- The address of the server that the database is running on -->
+		<attribute name='database_server'   value='dbserver' />
+
+		<!-- The username and password for database access -->
+		<attribute name='database_user'     value='dbuser' />
+		<attribute name='database_password' value='password1' />
+
+		<!-- The database that houses the data for schedulemaker -->
+		<attribute name='database_db'       value='schedule' />
+
+		<!-- The path to the course dump -->
+		<attribute name='dump_location'     value='/path/to/dump/file' />
+
+		<!-- The google analytics site id -->
+		<attribute name='google_analytics'  value='UA-75959-8' />
+
+		<!-- The address that schedulemaker can be accesed at -->
+		<attribute name='http_root_address' value='http://schedulemaker.com/' />
+	</attributes>
+</schedulemaker>
