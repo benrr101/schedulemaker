@@ -53,13 +53,14 @@ class Config {
 			}
 
 			// Grab the attribute name and value from the node
-			$nodeAttrs = $nod->attributes;
-			$attrName  = $nodeAttrs->getNamedItem("name");
-			$attrValue = $nodeAttrs->getNamedItem("value");
+			$nodeAttrs = $node->attributes;
+			$attrName  = $nodeAttrs->getNamedItem("name")->nodeValue;
+			$attrValue = $nodeAttrs->getNamedItem("value")->nodeValue;
 
 			// Create an array entry for this item
 			$this->attributes[$attrName] = $attrValue;
 		}
+		nl2br(var_dump($this->attributes, true));
 	}
 
 	private function __clone() { }

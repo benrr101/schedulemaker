@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
----- SCHEDULEMAKER - Configuration
-----
----- @file	inc/config.xml
----- @descrip	This file defines the attributes necessary for running the
-----		schedulemaker web application.
----- @author	Benjamin Russell (benrr101@csh.rit.edu)
+     SCHEDULEMAKER - Configuration
+    
+     @file	inc/config.xml
+     @descrip	This file defines the attributes necessary for running the
+    		schedulemaker web application.
+     @author	Benjamin Russell (benrr101@csh.rit.edu)
 -->
 <schedulemaker>
 	<attributes>
@@ -20,7 +20,7 @@
 		<attribute name='database_password' value='password1' />
 
 		<!-- The database that houses the data for schedulemaker -->
-		<attribute name='database_db'       value='schedule' />
+		<attribute name='database_name'       value='schedule' />
 
 		<!-- The path to the course dump -->
 		<attribute name='dump_location'     value='/path/to/dump/file' />
