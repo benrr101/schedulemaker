@@ -60,7 +60,7 @@ class DatabaseConnection {
 	 */
 	public function escape($str) {
 		// Escape and return
-		return $this->dbConn->real_escape_string($string);
+		return $this->dbConn->real_escape_string($str);
 	}
 
 	/**
@@ -98,13 +98,13 @@ class DatabaseConnection {
 		$this->result = $this->dbConn->query($query);
 		
 		// If the result was not a mysqli result then return it
-		if(!($result instanceof mysqli_result)) {
-			return $result;
+		if(!($this->result instanceof mysqli_result)) {
+			return $this->result;
 		}
 	
 		// The result was a mysqli_result, convert it to an array
 		$rows = array();
-		while($row = $result->fetch_assoc()) {
+		while($row = $this->result->fetch_assoc()) {
 			$rows[] = $row;
 		}
 		
