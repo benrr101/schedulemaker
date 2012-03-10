@@ -15,4 +15,13 @@ abstract class View {
 
 	// METHODS /////////////////////////////////////////////////////////////
 	abstract public function render();
+	
+	/**
+	 * Loads the requested include file from the viewincs folder
+	 * @param	string	$inc	The name of the file to include
+	 */
+	public function load($inc) {
+		require "viewincs/{$inc}.inc";
+		//@TODO: Error conditions
+	}
 }
