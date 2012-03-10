@@ -18,6 +18,6 @@ abstract class Model {
 	// METHODS /////////////////////////////////////////////////////////////
 	public function __construct() {
 		// Get an instance of the database connection
-		$this->$dbConn = DatabaseConnection::getInstance();	
+		$this->dbConn = DatabaseConnection::getInstance();	
 	}
 }

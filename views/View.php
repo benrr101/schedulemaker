@@ -19,8 +19,10 @@ abstract class View {
 	/**
 	 * Loads the requested include file from the viewincs folder
 	 * @param	string	$inc	The name of the file to include
+	 * @param	array	$params	An associative array of parameters to
+	 * 			the loaded inc file
 	 */
-	public function load($inc) {
+	public function load($inc, $params = NULL) {
 		require "viewincs/{$inc}.inc";
 		//@TODO: Error conditions
 	}
