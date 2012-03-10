@@ -45,9 +45,11 @@ function __autoload($class_name) {
 
 // URI PROCESSING //////////////////////////////////////////////////////////
 // Grab the URL
-$url      = (isset($_GET['url'])) ? $_GET['url'] : NULL;
-$urlSplit = (isset($_GET['url'])) ? explode("/", $url) : NULL;
-if(!$url) {
+$config   = Config::getInstance();
+$url      = $_SERVER['REQUEST_URI'];
+$url      = str_replace($config->getConfigValue("subdirectory"), "", $url);
+$urlSplit = explode('/', $url);
+if(empty($url)) {
 	// We weren't provided with a controller to load, so load the index page
 	$controller = "Index";
 } else {
