@@ -27,7 +27,14 @@ function __autoload($class_name) {
 	} elseif(strstr($class_name, "Controller") == "Controller") {
 		// Require a controller
 		require_once("controllers/{$class_name}.php");
+	} elseif(strstr($class_name, "Model") == "Model") {
+		// Require a model
+		require_once("models/{$class_name}.php");
+	} elseif(file_exists("inc/{$class_name}.php")) {
+		// Requiring a library class
+		require_once("inc/{$class_name}.php");
 	} else {
+		// @TODO:Do a real error
 		var_dump(strstr("Controller", $class_name));
 		var_dump(strrpos($class_name, "Controller"));
 		var_dump($class_name);
