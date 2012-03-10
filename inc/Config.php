@@ -60,7 +60,6 @@ class Config {
 			// Create an array entry for this item
 			$this->attributes[$attrName] = $attrValue;
 		}
-		nl2br(var_dump($this->attributes, true));
 	}
 
 	private function __clone() { }
