@@ -30,5 +30,8 @@
 
 		<!-- The address that schedulemaker can be accesed at -->
 		<attribute name='http_root_address' value='http://schedulemaker.com/' />
+
+		<!-- The subdirectory (or lack thereof) that schedulemaker exists at -->
+		<attribute name='subdirectory'      value='/schedule/'/>
 	</attributes>
 </schedulemaker>
