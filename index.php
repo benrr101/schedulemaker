@@ -21,23 +21,20 @@ if(isset($_GET['s'])) {
 // AUTOLOADING /////////////////////////////////////////////////////////////
 function __autoload($class_name) {
 	// What type of class is it?
-	if(strstr($class_name, "View") == "View") {
+	if(strstr($class_name, "View") == "View" && file_exists("views/{$class_name}.php")) {
 		// Require a view
 		require_once("views/{$class_name}.php");
-	} elseif(strstr($class_name, "Controller") == "Controller") {
+	} elseif(strstr($class_name, "Controller") == "Controller" && file_exists("controllers/{$class_name}.php")) {
 		// Require a controller
 		require_once("controllers/{$class_name}.php");
-	} elseif(strstr($class_name, "Model") == "Model") {
+	} elseif(strstr($class_name, "Model") == "Model" && file_exists("models/{$class_name}.php")) {
 		// Require a model
 		require_once("models/{$class_name}.php");
 	} elseif(file_exists("inc/{$class_name}.php")) {
 		// Requiring a library class
 		require_once("inc/{$class_name}.php");
 	} else {
-		// @TODO:Do a real error
-		var_dump(strstr("Controller", $class_name));
-		var_dump(strrpos($class_name, "Controller"));
-		var_dump($class_name);
+		throw new Exception("File does not exist: {$class_name}");
 	}
 
 	// @TODO: Check to see if the class exists
@@ -59,10 +56,15 @@ if(empty($url)) {
 
 // Load up the requested controller
 $controller .= "Controller";
-$controller = new $controller($url);
+try {
+	$controller = new $controller($url);
+} catch(Exception $e) {
+	$controller = new ErrorController($url);
+	$urlSplit[1] = "error404";
+}
 
 // Was there a method provided?
-if(!empty($urlSplit['1'])) {
+if(!empty($urlSplit[1])) {
 	// There was method provided! Does it exist?
 	$method = $urlSplit['1'];
 	if(method_exists($controller, $method)) {
@@ -75,3 +77,4 @@ if(!empty($urlSplit['1'])) {
 	// We're loading the default method (which is guaranteed to exist)
 	$controller->index();
 }
+?>
