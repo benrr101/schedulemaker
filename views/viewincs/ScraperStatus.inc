@@ -1,3 +1,4 @@
+<h1>Scraper Status</h1>
 <div class='subContainer'>
 	<h2>Scraper Last Ran: <?= date("m/d/y h:ia", $params['lastScrape']) ?></h2>
 	<h2>Last 20 Scrape Reports</h2>
