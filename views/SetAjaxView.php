@@ -20,9 +20,11 @@ class SetAjaxView extends View {
 	}
 
 	public function render() {
+		header("Content-type: application/json");
+		$dataset = array();
 		foreach($this->dataSet as &$obj) {
-			$obj = $obj->jsonEncode();
+			$dataset[] = $obj->jsonEncode();
 		}
-		echo json_encode($this->dataSet);
+		echo "[" . implode(",", $dataset) . "]";
 	}
 }

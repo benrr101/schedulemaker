@@ -37,6 +37,16 @@ abstract class View {
 		// Build the result url
 		return $this->baseURL . 'img/' . $imgFile;
 	}
+
+	/**
+	 * Builds a URL to the desired javascript file
+	 * @param	string	$jsFile	The javascript file to load
+	 * @return	string	A url to the javascript file
+	 */
+	protected function jsURL($jsFile) {
+		// Build the result url
+		return $this->baseURL . 'js/' . $jsFile;
+	}
 	
 	/**
 	 * Loads the requested include file from the viewincs folder
