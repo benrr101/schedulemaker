@@ -9,16 +9,8 @@
 
 // Register the on clicks for the schools
 $(document).ready( function() {
-	// Output a notice to Opera users
-	if(navigator.userAgent.match(/Opera/)) {
-		var operaNotice = $("<span>");
-		operaNotice.addClass("error");
-		operaNotice.html("This page is known to not work on Opera. We're currently looking into the issue. <a href='https://github.com/benrr101/schedulemaker/issues/43'>GitHub Issue</a>");
-		$("#browseQuarter").append(operaNotice);
-	}
-
 	// Add handlers to the 
-	$(".school > button").each(function(k, v) {
+	$("button").each(function(k, v) {
 		$(v).click(function() {
 			schoolOnExpand($(v));
 			return false;			// Avoid following the clicks
@@ -195,8 +187,8 @@ function schoolOnCollapse(obj) {
 	obj.html("+");
 	
 	// Get the parent and hide all it's children	
-	parent = obj.parent();
-	parent.children().last().slideUp();
+	var p = obj.parent();
+	var p.children().last().slideUp();
 
 	// Reset the click mechanism
 	obj.unbind("click");
@@ -210,51 +202,54 @@ function schoolOnExpand(obj) {
 	obj.click(function() {schoolOnCollapse($(this)); return false;});
 
 	// Get the parent and the input field of this school
-	parent = obj.parent();
-	input  = obj.next();
+	var p      = obj.parent();
+	var input  = obj.next();
 
 	// If the department already exists, then don't do the post resquest
-	if(parent.children().last().hasClass("subDivision")) {
-		parent.children().last().slideDown();
+	if(p.children().last().hasClass("subDivision")) {
+		p.children().last().slideDown();
 		return;
 	}
 
 	// If there was an error, remove the departments and redo the post request
-	if(parent.children().last().hasClass("error")) {
-		parent.children().last().remove();
+	if(p.children().last().hasClass("error")) {
+		p.children().last().remove();
 	}
 	
 	// Create a div for storing all the departments
-	box    = $("<div>").addClass("subDivision")
-					.appendTo(parent);
+	var box = $("<div>");
+	box.addClass("subDivision");
+	box.appendTo(p);
 
 	// Do an ajax call for the departments within this school
-	$.post("js/browseAjax.php", {'action': 'getDepartments', 'school': input.val()}, function(data) {
-		try {		
-			data = eval("(" + data + ")");
-		} catch(e) {
-			alert("An error occurred: the resulting jSON is malformed.");
-			return;
-		}
-
+	$.post("API/department/" + input.val(), {}, function(data) {
 		// Check for errors
 		if(data.error != null && data.error != undefined) {
 			box.addClass("error")
-				.html("Sorry! An error occurred!<br/>" + data.msg);
+			box.html("Sorry! An error occurred!<br/>" + data.msg);
 			box.slideDown();
 			return;
 		}
 
 		// No errors! Now we need to add a div for each department
-		for(i=0; i < data.departments.length; i++) {
-			div = $("<div>").addClass("item")
-					.html(" " + data.departments[i].id + " - " + data.departments[i].title);
-			$("<input>").attr("type", "hidden")
-					.val(data.departments[i].id)
-					.prependTo(div);
-			$("<button>").html("+")
-					.click(function() { departmentOnExpand($(this)); return false; })
-					.prependTo(div);
+		for(i=0; i < data.length; i++) {
+			// Div for the department
+			var div = $("<div>");
+			div.addClass("item");
+			div.html(" " + data[i].id + " - " + data[i].name);
+			
+			// Hidden value for the department value
+			var hidden = $("<input>");
+			hidden.attr("type", "hidden");
+			hidden.val(data[i].id)
+			hidden.prependTo(div);
+			
+			// Button for expansion of the department
+			var button = $("<button>");
+			button.html("+")
+			button.click(function() { departmentOnExpand($(this)); return false; })
+			button.prependTo(div);
+			
 			div.appendTo(box);
 		}
 

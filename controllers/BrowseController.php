@@ -18,7 +18,12 @@ class BrowseController extends Controller {
 		$header->render();
 
 		// Create a new browse model
-		$model = new BrowseModel();
+		$model = new CourseDBModel();
+
+		// Show a list of the quarters
+		$quarters = $model->getQuarter();
+		$quarterDiv = new BrowseQuarterSelectView($quarters, $model->currentQuarter());
+		$quarterDiv->render();
 	
 		// Grab all the schools from the model
 		$schools = $model->getSchools();
@@ -31,27 +36,5 @@ class BrowseController extends Controller {
 		// Load the footer
 		$footer = new FooterView();
 		$footer->render();		
-	}
-
-	// AJAX HANDLERS //////////////////////////////////////////////////////
-	public function getDepartments() {
-		// Figure out which school's departments to get
-		$urlSplit = explode('/', $this->getURI());
-		if(empty($urlSplit[2])) {
-			// Include an error View
-			// @TODO: error
-		}
-		$school = $urlSplit[2];
-
-		// Create a model that will load up the departments in the school
-		$model = new BrowseModel();
-		$departments = $model->getDepartments($school);
-		if(!count($departments)) {
-			// @TODO: Error view
-		}
-
-		// Create a view for the departments to return them
-		$view = new SetAjaxView($departments);
-		$view->render();
 	}
 }
