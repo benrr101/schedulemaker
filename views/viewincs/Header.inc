@@ -3,7 +3,7 @@
 	<head>
 		<title><?= $this->title ?></title>
 		<link href='<?= $this->baseURL ?>inc/global.css' rel='stylesheet' type='text/css'>
-		<script type='text/javascript' stc='<?= $this->baseURL ?>js/jquery.js'></script>
+		<script type='text/javascript' src='<?= $this->jsURL('jquery.js') ?>'></script>
 	</head>
 <body>
 	<div id='oldBadge'>
