@@ -31,7 +31,7 @@ class QuarterListView extends View {
 
 	public function render() {
 		// Output the top of the select
-		echo "<select name='{$this->name}'>";
+		echo "<select name='{$this->name}' id='{$this->name}'>";
 	
 		// Iterate over the list of quarters and output each one
 		foreach($this->quarters as $quarter) {

@@ -19,10 +19,10 @@ abstract class ScheduleItem extends SerializableObject {
 	// METHODS /////////////////////////////////////////////////////////////
 
 	// GETTERS /////////////////////////////////////////////////////////////
-	protected getTimes() { return $this->times; }
+	protected function getTimes() { return $this->times; }
 
 	// SETTERS /////////////////////////////////////////////////////////////
-	protected addTime($obj) {
+	protected function addTime($obj) {
 		// If it's not a time object, throw exception
 		if(!($obj instanceof Time)) {
 			throw new Exception("Cannot add non-Time object to a ScheduleItem's time slot");

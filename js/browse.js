@@ -111,8 +111,8 @@ function departmentOnCollapse(obj) {
 	obj.html("+");
 	
 	// Get the parent and hide all it's children courses
-	parent = obj.parent();
-	parent.children().last().slideUp()
+	var p = obj.parent();
+	p.children().last().slideUp()
 
 	// Reset the click function
 	obj.unbind("click");
@@ -126,55 +126,57 @@ function departmentOnExpand(obj) {
 	obj.click(function() { departmentOnCollapse($(this)); return false; });
 
 	// Get the parent and the input field
-	parent  = obj.parent();
-	input   = obj.next();
-	quarter = $("#quarter");
+	var p       = obj.parent();
+	var input   = obj.next();
+	var quarter = $("#quarter");
 
 	// If the courses already exist, then don't do the post request
-	if(parent.children().last().hasClass("subDivision")) {
-		parent.children().last().slideDown();
+	if(p.children().last().hasClass("subDivision")) {
+		p.children().last().slideDown();
 		return;
 	}
 
 	// If there was an error, remove the error and redo the post request
-	if(parent.children().last().hasClass("error")) {
-		parent.children().last().remove();
+	if(p.children().last().hasClass("error")) {
+		p.children().last().remove();
 	}
 
 	// Create a div for storing all the courses
-	box = $("<div>").addClass("subDivision")
-			.appendTo(parent);
+	var box = $("<div>");
+	box.addClass("subDivision");
+	box.appendTo(p);
 
 	// Do an ajax call for the courses within the department
-	$.post("js/browseAjax.php", {"action": "getCourses", "department": input.val(), "quarter": quarter.val()}, function(data) {
-		try {
-			data = eval("(" + data + ")");
-		} catch(e) {
-			alert("An error occurred: the resulting jSON is malformed.");
-			return;
-		}
-		
+	$.post("API/course/" + quarter.val() + "/" + input.val() + "/all", {}, function(data) {
 		// Check for errors
 		if(data.error != null && data.error != undefined) {
-			box.addClass("error")
-				.html("Sorry! An error occurred!<br />" + data.msg);
+			box.addClass("error");
+			box.html("Sorry! An error occurred!<br />" + data.msg);
 			box.slideDown();
 			return;
 		}
 
 		// No errors! Now we need to add a div for each course
-		for(i=0; i < data.courses.length; i++) {
-			div = $("<div>").addClass("item")
-						.html(" " + data.courses[i].department + "-" + data.courses[i].course + " - " + data.courses[i].title);
-			$("<p>").html(data.courses[i].description)
-						.addClass("courseDescription")
-						.appendTo(div);
-			$("<input>").attr("type", "hidden")
-						.val(data.courses[i].id)
-						.prependTo(div);
-			$("<button>").html("+")
-						.click(function() { courseOnExpand($(this)); return false; })
-						.prependTo(div);
+		for(i=0; i < data.length; i++) {
+			var div = $("<div>")
+			div.addClass("item");
+			div.html(" " + data[i].department + "-" + data[i].course + " - " + data[i].title);
+
+			var descrip = $("<p>")
+			descrip.html(data[i].description);
+			descrip.addClass("courseDescription");
+			descrip.appendTo(div);
+			
+			var hidden = $("<input>");
+			hidden.attr("type", "hidden");
+			hidden.val(data[i].id);
+			hidden.prependTo(div);
+
+			var button = $("<button>")
+			button.html("+");
+			button.click(function() { courseOnExpand($(this)); return false; })
+			button.prependTo(div);
+
 			div.appendTo(box);
 		}
 
@@ -188,7 +190,7 @@ function schoolOnCollapse(obj) {
 	
 	// Get the parent and hide all it's children	
 	var p = obj.parent();
-	var p.children().last().slideUp();
+	p.children().last().slideUp();
 
 	// Reset the click mechanism
 	obj.unbind("click");

@@ -59,4 +59,32 @@ class APIController extends Controller {
 		$view = new SetAjaxView($departments);
 		$view->render();
 	}
+
+	public function course() {
+		// Access the URI to figure out which course(s) to get
+		//       0     1      2        3          4
+		// URL: API/course/quarter/department/(all|couse_num)
+		$urlSplit = explode('/', $this->getURI());
+		if(empty($urlSplit[2])) {
+			//@TODO: Error ajax: No quarter specified
+		} elseif(empty($urlSplit[3])) {
+			// @TODO: Error ajax: No department specified
+		} elseif(empty($urlSplit[4])) {
+			// @TODO: Error ajax: No course number
+		}
+		$quarter = $urlSplit[2];
+		$depart  = $urlSplit[3];
+		$course  = $urlSplit[4];
+		
+		// Create a model to access the desired courses
+		$model = new CourseDBModel();
+		$courses = $model->getCourses($quarter, $depart, $course);
+		if(!count($courses)) {
+			// @TODO: Error ajax
+		}
+
+		// Create a view for outputting the courses
+		$view = new SetAjaxView($courses);
+		$view->render();
+	}
 }

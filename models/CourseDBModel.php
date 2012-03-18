@@ -108,4 +108,36 @@ class CourseDBModel extends Model {
 
 		return $departments;
 	}
+
+	public function getCourses($quarter, $department, $course) {
+		// Build a query for the all the courses that match the search
+		$query = "SELECT id, department, course, credits, quarter, title, description FROM courses";
+		$query .= " WHERE quarter='{$this->dbConn->escape($quarter)}'";
+		$query .= " AND department='{$this->dbConn->escape($department)}'";
+		// Conditionally add the course number
+		if($course != "all") {
+			$query .= " AND course='{$this->dbConn->escape($course)}'";
+		}
+		$results = $this->dbConn->query($query);
+		if(!$results) {
+			// @TODO: Error database
+			die($this->dbConn->getError());
+		}
+
+		// Iterate over the results and create course objects
+		$courses = array();
+		foreach($results as $row) {
+			$courses[] = new Course(
+				$row['quarter'],
+				$row['department'],
+				$row['course'],
+				$row['title'],
+				$row['description'],
+				$row['credits'],
+				$row['title']
+				);
+		}
+
+		return $courses;
+	}
 } 
