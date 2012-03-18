@@ -9,14 +9,14 @@
 // @author	Benjamin Russell (benrr101@csh.rit.edu)
 ////////////////////////////////////////////////////////////////////////////
 
-class Department {
+class Department extends SerializableObject {
 	// MEMBER VARIABLES ////////////////////////////////////////////////////
 	
 	// int	The id of the department (also the department number)
-	private $id;
+	protected $id;
 
 	// string	The name of the department
-	private $name;
+	protected $name;
 
 	// CONSTRUCTOR /////////////////////////////////////////////////////////
 	public function __construct($id, $name) {
@@ -29,11 +29,4 @@ class Department {
 	public function getId()     { return $this->id; }
 	public function getName()   { return $this->name;}
 	public function getSchool() { return substr($this->id, 0, 2); }
-
-	public function jsonEncode() {
-		foreach($this as $key=>$value) {
-			$json->$key = $value;
-		}
-		return json_encode($json);
-	}
 }

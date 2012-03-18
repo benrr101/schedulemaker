@@ -8,14 +8,14 @@
 // @author  Benjamin Russell (benrr101@csh.rit.edu)
 ////////////////////////////////////////////////////////////////////////////
 
-class School {
+class School extends SerializableObject {
     // MEMBER VARIABLES ////////////////////////////////////////////////////
 
     // int  The id of the school
-    private $id;
+    protected $id;
 
     // string   The name of the school
-    private $name;
+    protected $name;
 
     // CONSTRUCTOR /////////////////////////////////////////////////////////
     public function __construct($id, $name) {
@@ -26,11 +26,4 @@ class School {
     // GETTERS /////////////////////////////////////////////////////////////
     public function getId()   { return $this->id; }
     public function getName() { return $this->name; }
-
-	public function jsonEncode() {
-		foreach($this as $key=>$value) {
-			$json->$key = $value;
-		}
-		return json_encode($json);
-	}
 }

@@ -8,23 +8,23 @@
 // @author	Benjamin Russell (benrr101@csh.rit.edu)
 ////////////////////////////////////////////////////////////////////////////
 
-class Quarter {
+class Quarter extends SerializableObject {
 	// MEMBER VARIABLES ////////////////////////////////////////////////////
 
 	// int	UNIX Timestamp of when the break ends (or 0 for doesn't exist)
-	private $breakEnd;
+	protected $breakEnd;
 
 	// int	UNIX timestamp of when the break starts (or 0 for doesn't exist)
-	private $breakStart;
+	protected $breakStart;
 
 	// int	UNIX timestamp of when the quarter ends
-	private $end;
+	protected $end;
 
 	// int	ID of the quarter (\d{4}[1234]) OR (\d{3}???)
-	private $id;
+	protected $id;
 
 	// int	UNIX timestamp of when the quarter starts
-	private $start;
+	protected $start;
 
 	// CONSTRUCTOR /////////////////////////////////////////////////////////
 	public function __construct($id, $start = 0, $end = 0, $bStart = 0, $bEnd = 0) {
