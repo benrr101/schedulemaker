@@ -13,6 +13,9 @@ abstract class SerializableObject {
 	// METHODS /////////////////////////////////////////////////////////////
 	public function jsonEncode() {
 		foreach($this as $key=>$value) {
+			if($value instanceof SerializableObject) {
+				$value = json_decode($value->jsonEncode());
+			}
 			$json->$key = $value;
 		}
 		return json_encode($json);

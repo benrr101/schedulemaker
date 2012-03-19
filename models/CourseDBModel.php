@@ -56,7 +56,7 @@ class CourseDBModel extends Model {
 	public function getQuarter($quarter = 'all') {
 		if($quarter == 'all') {
 			// Build a query that will lookup the quarters
-			$query = "SELECT quarter AS id, start, end, breakstart, breakend FROM quarters";
+			$query = "SELECT quarter AS id, start, end, breakstart, breakend FROM quarters ORDER BY quarter";
 			$result = $this->dbConn->query($query);
 			if(!$result) {
 				//@TODO: Error
@@ -114,6 +114,7 @@ class CourseDBModel extends Model {
 		$query = "SELECT id, department, course, credits, quarter, title, description FROM courses";
 		$query .= " WHERE quarter='{$this->dbConn->escape($quarter)}'";
 		$query .= " AND department='{$this->dbConn->escape($department)}'";
+		$query .= " ORDER BY course";
 		// Conditionally add the course number
 		if($course != "all") {
 			$query .= " AND course='{$this->dbConn->escape($course)}'";
@@ -136,6 +137,73 @@ class CourseDBModel extends Model {
 				$row['credits'],
 				$row['title']
 				);
+		}
+
+		return $courses;
+	}
+
+	public function getSections($quarter, $department, $course, $section) {
+		// Build a query for all the sections that match the search
+		$query = "SELECT c.department, c.course, c.credits, c.quarter, c.title AS ctitle, c.description,";
+		$query .= " s.id, s.section, s.title AS stitle, s.type, s.status, s.instructor, s.maxenroll, s.curenroll";
+		$query .= " FROM sections AS s JOIN courses AS c ON s.course = c.id";
+		$query .= " WHERE c.quarter='{$this->dbConn->escape($quarter)}'";
+		$query .= " AND c.department='{$this->dbConn->escape($department)}'";
+		$query .= " AND c.course='{$this->dbConn->escape($course)}'";
+		if($section != "all") {
+			$query .= " AND s.section='{$this->dbConn->escape($section)}'";
+		}
+		$query .= " ORDER BY section";
+
+		$results = $this->dbConn->query($query);
+		if(!$results) {
+			// @TODO: Error database
+			die($this->dbConn->getError());
+		}
+
+		// Iterate over the results and create course objects
+		$courses = array();
+		foreach($results as $row) {
+			$course = new Course(
+				$row['quarter'],
+				$row['department'],
+				$row['course'],
+				(!empty($row['stitle'])) ? $row['stitle'] : $row['ctitle'],
+				NULL,
+				$row['credits'],
+				$row['section'],
+				$row['instructor'],
+				$row['type'],
+				$row['status'],
+				$row['maxenroll'],
+				$row['curenroll']
+				);
+
+			// Query for the times that the section meets
+			$tQuery = "SELECT day, start, end, building, room FROM times";
+			$tQuery .= " WHERE section={$this->dbConn->escape($row['id'])}";
+			$tQuery .= " ORDER BY day, start";
+			$tResult = $this->dbConn->query($tQuery);
+			
+			// Error check
+			if(!$results) {
+				// @TODO: Error database
+				die($this->dbConn->getError());
+			}
+
+			// Iterate over the times and create time objects
+			foreach($tResult as $tRow) {
+				$course->addTime(new Time(
+					$tRow['day'],
+					$tRow['start'],
+					$tRow['end'],
+					$tRow['building'],
+					$tRow['room']
+					));
+			}
+
+			// Add the course to the list
+			$courses[] = $course;
 		}
 
 		return $courses;

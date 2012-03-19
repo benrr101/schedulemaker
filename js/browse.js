@@ -38,65 +38,68 @@ function courseOnExpand(obj) {
 	obj.click(function() { courseOnCollapse($(this)); return false; });
 
 	// Get the parent and the input field
-	parent = obj.parent();
-	input  = obj.next();
+	var p       = obj.parent();
+	var input   = obj.next();
+	var quarter = $("#quarter");
 
 	// Expand the course description
 	input.next().slideDown();
 	
 	// If the sections already exist, then don't do the post request
-	if(parent.children().last().hasClass("subDivision")) {
-		parent.children().last().slideDown();
+	if(p.children().last().hasClass("subDivision")) {
+		p.children().last().slideDown();
 		return;
 	}
 
 	// If there was an error, remove the error and redo the post request
-	if(parent.children().last().hasClass("error")) {
-		parent.children().last().remove();
+	if(p.children().last().hasClass("error")) {
+		p.children().last().remove();
 	}
 
 	// Creat a div for storing all the sections
-	box = $("<div>").addClass("subDivision")
-			.appendTo(parent);
+	var box = $("<div>");
+	box.addClass("subDivision");
+	box.appendTo(p);
+
+	// Parse the course number into a department and a course
+	var args = input.val().match(/(\d{4})-(\d{3})/);
 
 	// Do an ajax call for the sections of the course
-	$.post("js/browseAjax.php", {"action": "getSections", "course": input.val()}, function(data) {
-		try {
-			data = eval("(" + data + ")");
-		} catch(e) {
-			alert("An error occurred: the jSON is malformed");
-			return;
-		}
+	$.post("API/section/" + quarter.val() + "/" + args[1] + "/" + args[2] + "/all", {}, function(data) {
+		//@DEBUG
+		q = data;
 
 		// Check for errors
 		if(data.error != null && data.error != undefined) {
-			box.addClass("error")
-				.html("Sorry! An error occurred!<br />" + data.msg);
+			box.addClass("error");
+			box.html("Sorry! An error occurred!<br />" + data.msg);
 			box.slideDown();
 			return;
 		}
 		
 		// No Errors!! No we need to add a div for each section
-		for(i=0; i < data.sections.length; i++) {
-			div = $("<div>").addClass("item")
-					.html("<b>" + data.sections[i].department + "-" + data.sections[i].course + "-" + data.sections[i].section + "</b>"
-						+ " : " + data.sections[i].title + " with " + data.sections[i].instructor + " ");
+		for(i=0; i < data.length; i++) {
+			var div = $("<div>");
+			div.addClass("item");
+			div.html("<b>" + data[i].department + "-" + data[i].course + "-" + data[i].section + "</b>"
+				+ " : " + data[i].title + " with " + data[i].instructor + " ");
 			
 			// If the section is online, mark it as such
-			if(data.sections[i].online) {
+			if(data[i].online) {
 				div.append($("<span class='online'>ONLINE</span>"));
 			}
 
 			// Add a paragraph for the current and maximum enrollment
-			$("<p>").html("Course Enrollment: " + data.sections[i].curenroll + " out of " + data.sections[i].maxenroll)
-				.appendTo(div);
+			var descrip = $("<p>");
+			descrip.html("Course Enrollment: " + data[i].curEnroll + " out of " + data[i].maxEnroll);
+			descrip.appendTo(div);
 
 			// Add a paragraph for each meeting time
 			var times = $("<p>");
-			for(j=0; j < data.sections[i].times.length; j++) {
+			for(j=0; j < data[i].times.length; j++) {
 				times.html(times.html() +
-					data.sections[i].times[j].day + " " + data.sections[i].times[j].start + " - " + data.sections[i].times[j].end
-					+ " " + data.sections[i].times[j].building + "-" + data.sections[i].times[j].room + "<br />");
+					data[i].times[j].dayString + " " + data[i].times[j].startString + " - " + data[i].times[j].endString
+					+ " " + data[i].times[j].building + "-" + data[i].times[j].room + "<br />");
 			}
 			times.appendTo(div);
 
@@ -169,7 +172,7 @@ function departmentOnExpand(obj) {
 			
 			var hidden = $("<input>");
 			hidden.attr("type", "hidden");
-			hidden.val(data[i].id);
+			hidden.val(data[i].department + "-" + data[i].course);
 			hidden.prependTo(div);
 
 			var button = $("<button>")
