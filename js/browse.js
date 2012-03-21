@@ -9,14 +9,27 @@
 
 // Register the on clicks for the schools
 $(document).ready( function() {
-	// Add handlers to the 
+	// Add handlers to the buttons to expand schools
 	$("button").each(function(k, v) {
 		$(v).click(function() {
 			schoolOnExpand($(v));
 			return false;			// Avoid following the clicks
 			});
 		});
+
+	// Add handler to the quarter dropdown to collapse all and remove the
+	// children from the schools
+	$("#quarter").change(function(obj) {
+		// Officially collapse all the schools then remove them
+		$(".item").children("button").each(function(k, v) { 
+			schoolOnCollapse($(v)); 
+		});
+		$(".item").children("div").remove();
+
+		// Change the header
+		$("#quarterHeader").html($(obj.target).children(":selected").html());
 	});
+});
 
 function courseOnCollapse(obj) {
 	obj.html("+");
@@ -94,12 +107,19 @@ function courseOnExpand(obj) {
 			descrip.html("Course Enrollment: " + data[i].curEnroll + " out of " + data[i].maxEnroll);
 			descrip.appendTo(div);
 
-			// Add a paragraph for each meeting time
+			// Add a paragraph for the times that the section meets
 			var times = $("<p>");
-			for(j=0; j < data[i].times.length; j++) {
-				times.html(times.html() +
-					data[i].times[j].dayString + " " + data[i].times[j].startString + " - " + data[i].times[j].endString
-					+ " " + data[i].times[j].building + "-" + data[i].times[j].room + "<br />");
+			if(data[i].times == null) {
+				// There were no times
+				times.html("<span style='font-weight:bold'>This section has no meeting times</span>");
+			} else {
+				// There are times for 
+				for(j=0; j < data[i].times.length; j++) {
+					var time = data[i].times[j];
+					var str  = time.dayString + " " + time.startString + " - " + time.endString;
+					str += " " + time.building + "-" + time.room + "<br />";
+					times.html(times.html() + str);
+				}
 			}
 			times.appendTo(div);
 

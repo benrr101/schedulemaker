@@ -26,7 +26,7 @@ class BrowseQuarterSelectView extends View {
 
 	public function render() {
 		// Draw the header and title
-		echo "<h1>Browse Courses &gt; {$this->curQuarter->getName()}</h1>";
+		echo "<h1>Browse Courses &gt; <span id='quarterHeader'>{$this->curQuarter->getName()}</span></h1>";
 		echo "<div id='browseQuarter' class='subContainer'>";
 		echo "<script type='text/javascript' src='{$this->jsURL('browse.js')}'></script>";
 		echo "Select a Different Quarter: ";
