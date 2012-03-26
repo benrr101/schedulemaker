@@ -89,6 +89,11 @@ function courseOnExpand(obj) {
 			box.slideDown();
 			return;
 		}
+
+		// Output nothing if there are no sections for the course
+		if(data.length == 0) {
+			box.html("<span style='font-weight:bold'>There are no sections for this course scheduled this for quarter");
+		}
 		
 		// No Errors!! No we need to add a div for each section
 		for(i=0; i < data.length; i++) {

@@ -114,11 +114,12 @@ class CourseDBModel extends Model {
 		$query = "SELECT id, department, course, credits, quarter, title, description FROM courses";
 		$query .= " WHERE quarter='{$this->dbConn->escape($quarter)}'";
 		$query .= " AND department='{$this->dbConn->escape($department)}'";
-		$query .= " ORDER BY course";
 		// Conditionally add the course number
 		if($course != "all") {
 			$query .= " AND course='{$this->dbConn->escape($course)}'";
 		}
+		$query .= " ORDER BY course";
+
 		$results = $this->dbConn->query($query);
 		if(!$results) {
 			// @TODO: Error database
@@ -152,6 +153,10 @@ class CourseDBModel extends Model {
 		$query .= " AND c.course='{$this->dbConn->escape($course)}'";
 		if($section != "all") {
 			$query .= " AND s.section='{$this->dbConn->escape($section)}'";
+		} else {
+			// Don't show cancelled courses if no specific course 
+			// is specified
+			$query .= " AND status!='X'";
 		}
 		$query .= " ORDER BY section";
 
